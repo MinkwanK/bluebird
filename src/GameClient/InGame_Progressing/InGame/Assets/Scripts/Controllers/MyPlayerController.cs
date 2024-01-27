@@ -6,22 +6,32 @@ using Cinemachine;
 using static Define;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-//ÇÃ·¹ÀÌ¾î°¡ goal ÇÏ¸é stagenumÀ» °Ë»çÇÑ´Ù. ¸¸¾à ÃÖÁ¾ ½ºÅ×ÀÌÁö°¡ ¾Æ´Ï¸é don't destory on load. ÃÖÁ¾½ºÅ×ÀÌÁö¸é destroy
-//goal ¸øÇÏ¸é ¹Ù·Î destory. don't destory on load ÇÑ°Ç ´ÙÀ½ ½ºÅ×ÀÌÁö¿¡¼­ ½ºÆùÀ§Ä¡¿¡ ¼ÒÈ¯
+
+
+
+//í”Œë ˆì´ì–´ê°€ goal í•˜ë©´ stagenumì„ ê²€ì‚¬í•œë‹¤. ë§Œì•½ ìµœì¢… ìŠ¤í…Œì´ì§€ê°€ ì•„ë‹ˆë©´ don't destory on load. ìµœì¢…ìŠ¤í…Œì´ì§€ë©´ destroy
+//goal ëª»í•˜ë©´ ë°”ë¡œ destory. don't destory on load í•œê±´ ë‹¤ìŒ ìŠ¤í…Œì´ì§€ì—ì„œ ìŠ¤í°ìœ„ì¹˜ì— ì†Œí™˜
+
+
+/*
+ * ê²Œì„ ì‚¬ìš©ìê°€ ì¡°ì‘í•˜ëŠ” í”Œë ˆì´ì–´ì˜ ìŠ¤í¬ë¦½íŠ¸, PlayerControllerë¡œë¶€í„° ìƒì†ë°›ëŠ”ë‹¤.
+ * í”Œë ˆì´ì–´ì˜ ì¡°ì‘ì— ë”°ë¼ ìƒíƒœê°€ ë°”ë€Œë©°, ì´ë¥¼ ì„œë²„ì— íŒ¨í‚·ìœ¼ë¡œ ì „ì†¡í•œë‹¤.
+ * 
+ * 
+ * */
 public class MyPlayerController : PlayerController
 {
-    //public  bool serverCommunication = false;
-    GameScene gamescene;
+
     GameManager gamemanager;
     CameraController cameracontroller;
     bool inMenu = false;
-    bool inGoal = false;
+
 
     GameObject[] enemys;
     protected override void Init()
     {
         base.Init();
-        gamescene = GameObject.Find("GameScene").GetComponent<GameScene>();
+  
         gamemanager = GameObject.Find("GameManager").GetComponent<GameManager>();
         cameracontroller = GameObject.Find("Virtual Camera").GetComponent<CameraController>();
 
@@ -44,14 +54,16 @@ public class MyPlayerController : PlayerController
     }
     void GetInput()
     {
-        if (gamescene.CheckStartGame() && !inGoal)
+
+        if ( !inGoal)
         {
-            //if (transform.position.y < -1)
-            //{
-            //    Debug.Log("Fail Spawn: " + spawnPoint);
-            //    transform.position = spawnPoint;
-            //    transform.rotation = Quaternion.Euler(0, 180f, 0f);
-            //}
+            //ë°”ë‹¥ì— ë–¨ì–´ì§€ë©´ ìŠ¤í° í¬ì¸íŠ¸ë¡œ ê°•ì œ ì´ë™
+            if (transform.position.y < -1)
+            {
+                Debug.Log("Fail Spawn: " + spawnPoint);
+                transform.position = spawnPoint;
+                transform.rotation = Quaternion.Euler(0, 180f, 0f);
+            }
             if (State == BirdState.Jumping && isJumping == false)
             {
                 State = BirdState.Idle;
@@ -91,8 +103,8 @@ public class MyPlayerController : PlayerController
 
             }
 
-            //esc¸¦ ´©¸£¸é menupanelÀÌ È°¼ºÈ­µÇ°í ³ªÀÇ Å°º¸µå ½Ã½ºÅÛÀº Á¤ÁöµÈ´Ù.
-            //°è¼ÓÇÏ±â¸¦ ´©¸£¸é menupaneelÀÌ ºñÈ°¼ºÈ­µÇ°í, ³ªÀÇ Å°º¸µå ½Ã½ºÅÛÀº ´Ù½Ã ½ÃÀÛµÈ´Ù.
+            //escë¥¼ ëˆ„ë¥´ë©´ menupanelì´ í™œì„±í™”ë˜ê³  ë‚˜ì˜ í‚¤ë³´ë“œ ì‹œìŠ¤í…œì€ ì •ì§€ëœë‹¤.
+            //ê³„ì†í•˜ê¸°ë¥¼ ëˆ„ë¥´ë©´ menupaneelì´ ë¹„í™œì„±í™”ë˜ê³ , ë‚˜ì˜ í‚¤ë³´ë“œ ì‹œìŠ¤í…œì€ ë‹¤ì‹œ ì‹œì‘ëœë‹¤.
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 inMenu = true;
@@ -100,10 +112,10 @@ public class MyPlayerController : PlayerController
             }
         }
 
-        else if (gamescene.CheckStartGame() && inGoal)
+        else if ( inGoal)
         {
 
-            //Map ³»ÀÇ Enemy ÅÂ±×¸¦ °¡Áø ÇÃ·¹ÀÌ¾î¸¦ follow½ÃÅ²´Ù. Ä«¸Ş¶ó¸¦
+            //Map ë‚´ì˜ Enemy íƒœê·¸ë¥¼ ê°€ì§„ í”Œë ˆì´ì–´ë¥¼ followì‹œí‚¨ë‹¤. ì¹´ë©”ë¼ë¥¼
 
             enemys = GameObject.FindGameObjectsWithTag("Enemy");
 
@@ -114,10 +126,12 @@ public class MyPlayerController : PlayerController
 
             }
         }
+
         //  Debug.Log("State : " + State + " isJumping: " + isJumping + " moveVec: " + moveVec + " pressedJump: " + pressedJump + "isSliding" + isSliding) ; 
+
     }
 
-    //Idle·Î °è¼Ó ³²À»Áö, ´Ù¸¥ »óÅÂ·Î ³Ñ¾î°¥Áö¸¦ ÆÇ´Ü.
+    //Idleë¡œ ê³„ì† ë‚¨ì„ì§€, ë‹¤ë¥¸ ìƒíƒœë¡œ ë„˜ì–´ê°ˆì§€ë¥¼ íŒë‹¨.
     protected override void UpdateIdle()
     {
 
@@ -131,10 +145,14 @@ public class MyPlayerController : PlayerController
 
     }
 
-    //ÇÃ·¹ÀÌ¾î°¡ ¸ÕÀú ÀÌµ¿ÇÏ°í ÁÂÇ¥¸¦ º¸³¿, ÇÃ·¹ÀÌ¾îÀÇ Áö»ó¿¡¼­ÀÇ ¿òÁ÷ÀÓÀ» Á¦¾îÇÑ´Ù.
+    //í”Œë ˆì´ì–´ê°€ ë¨¼ì € ì´ë™í•˜ê³  ì¢Œí‘œë¥¼ ë³´ëƒ„, í”Œë ˆì´ì–´ì˜ ì§€ìƒì—ì„œì˜ ì›€ì§ì„ì„ ì œì–´í•œë‹¤.
     protected override void UpdateMoving()
     {
+
+
+
         prevVec = transform.position;
+
 
         Vector3 movementDirection = Quaternion.AngleAxis(cam.transform.eulerAngles.y, Vector3.up) * moveVec;
 
@@ -167,7 +185,11 @@ public class MyPlayerController : PlayerController
             Managers.Network.Send(playerMove, INGAME.PlayerMove);
 
         }
+
+
+
     }
+
 
     protected override void UpdateJumping()
     {
@@ -180,14 +202,14 @@ public class MyPlayerController : PlayerController
 
         transform.rotation = Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f);
 
-        //¹Ù´Ú¿¡ ÂøÁöÇØÀÖ´Â »óÅÂ¶ó¸é Á¡ÇÁ ¼öÇà
+        //ë°”ë‹¥ì— ì°©ì§€í•´ìˆëŠ” ìƒíƒœë¼ë©´ ì í”„ ìˆ˜í–‰
         if (!isJumping && State == BirdState.Jumping)
         {
             Jump();
             isJumping = true;
         }
 
-        //¾ÆÁ÷±îÁö °øÁß¿¡ ¶°ÀÖ´Ù¸é °è¼ÓÇØ¼­ ÆĞÅ¶ Àü¼Û
+        //ì•„ì§ê¹Œì§€ ê³µì¤‘ì— ë– ìˆë‹¤ë©´ ê³„ì†í•´ì„œ íŒ¨í‚· ì „ì†¡
         if (isJumping && State == BirdState.Jumping)
         {
             UpdateAnimation();
@@ -200,42 +222,16 @@ public class MyPlayerController : PlayerController
                     audioSource.clip = slidClip;
                     audioSource.Play();
                 }
+                Slide();
 
             }
 
             transform.position += movementDirection * speed * Time.deltaTime;
         }
-
-        if (!isSliding)
-        {
-            Move playerMove = new Move()
-            {
-                Id = playerId,
-                Position = new Vector { X = transform.position.x, Y = transform.position.y, Z = transform.position.z },
-                Rotation = new Vector { X = transform.eulerAngles.x, Y = transform.eulerAngles.y, Z = transform.eulerAngles.z },
-                State = PlayerState.Jump,
-            };
-
-            Managers.Network.Send(playerMove, INGAME.PlayerMove);
-        }
-        else
-        {
-            Move playerMove = new Move()
-            {
-                Id = playerId,
-                Position = new Vector { X = transform.position.x, Y = transform.position.y, Z = transform.position.z },
-                Rotation = new Vector { X = transform.eulerAngles.x, Y = transform.eulerAngles.y, Z = transform.eulerAngles.z },
-                State = PlayerState.Slide,
-            };
-
-            Managers.Network.Send(playerMove, INGAME.PlayerMove);
-        }
-
-
-
-
     }
 
+
+    //ì í”„ ìƒíƒœë¼ëŠ” íŒ¨í‚·ì„ ë³´ë‚¸ë‹¤.
     void Jump()
     {
         if (!isJumping && State == BirdState.Jumping)
@@ -249,9 +245,37 @@ public class MyPlayerController : PlayerController
 
             }
 
+            Move playerMove = new Move()
+            {
+                Id = playerId,
+                Position = new Vector { X = transform.position.x, Y = transform.position.y, Z = transform.position.z },
+                Rotation = new Vector { X = transform.eulerAngles.x, Y = transform.eulerAngles.y, Z = transform.eulerAngles.z },
+                State = PlayerState.Jump,
+            };
+
+            Managers.Network.Send(playerMove, INGAME.PlayerMove);
+
         }
         else
             return;
+    }
+
+    void Slide()
+    {
+        if (!isJumping && State == BirdState.Sliding)
+        {
+            animator.SetBool("isSlide", true);
+            Move playerMove = new Move()
+            {
+                Id = playerId,
+                Position = new Vector { X = transform.position.x, Y = transform.position.y, Z = transform.position.z },
+                Rotation = new Vector { X = transform.eulerAngles.x, Y = transform.eulerAngles.y, Z = transform.eulerAngles.z },
+                State = PlayerState.Slide,
+            };
+
+            Managers.Network.Send(playerMove, INGAME.PlayerMove);
+
+        }
     }
 
     void UpdateAnimation()
@@ -277,9 +301,9 @@ public class MyPlayerController : PlayerController
         }
     }
 
-    //Goal ÇÏ¸é invisible, Ä«¸Ş¶ó¸¸ ¿òÁ÷ÀÏ ¼ö ÀÖ°Ô ¸¸µç´Ù.
-    //°ÔÀÓ ½Ã°£ ÃÊ°ú or ¸ğµç ÀÎ¿øÀÌ °á½Â¼±À» Åë°úÇØ °ÔÀÓÀÌ Á¾·áµÇ¸é Åë°úÇÑ ÇÃ·¹ÀÌ¾î¸¦ ´ÙÀ½ SceneÀ¸·Î ¿Å±ä´Ù. 
-    //´ÙÀ½ SceneÀ¸·Î ¿Å°ÜÁø PlayerµéÀº Random ÇÑ Ãâ¹İ¼±¾ÈÀÇ Random Position¿¡ ½ºÆùµÈ´Ù. 
+    //Goal í•˜ë©´ invisible, ì¹´ë©”ë¼ë§Œ ì›€ì§ì¼ ìˆ˜ ìˆê²Œ ë§Œë“ ë‹¤.
+    //ê²Œì„ ì‹œê°„ ì´ˆê³¼ or ëª¨ë“  ì¸ì›ì´ ê²°ìŠ¹ì„ ì„ í†µê³¼í•´ ê²Œì„ì´ ì¢…ë£Œë˜ë©´ í†µê³¼í•œ í”Œë ˆì´ì–´ë¥¼ ë‹¤ìŒ Sceneìœ¼ë¡œ ì˜®ê¸´ë‹¤. 
+    //ë‹¤ìŒ Sceneìœ¼ë¡œ ì˜®ê²¨ì§„ Playerë“¤ì€ Random í•œ ì¶œë°˜ì„ ì•ˆì˜ Random Positionì— ìŠ¤í°ëœë‹¤. 
 
     protected override void OnCollisionEnter(Collision collision)
     {
@@ -288,7 +312,7 @@ public class MyPlayerController : PlayerController
             State = BirdState.Idle;
             isJumping = false;
             isSliding = false;
-            inGoal = true;
+         
 
             UpdateAnimation();
 
@@ -298,15 +322,16 @@ public class MyPlayerController : PlayerController
                 Success = true,
             };
             Managers.Network.Send(pkt, INGAME.PlayerGoal);
-            clearStageNum++;
-            inGoal = true;
+
+     
 
             this.transform.GetChild(0).gameObject.SetActive(false);
+            this.GetComponent<CapsuleCollider>().enabled = false;
+
+            Debug.Log("MyPlayer Goal! " + playerId);
 
 
-
-
-
+            inGoal = true;
 
         }
 
@@ -339,36 +364,3 @@ public class MyPlayerController : PlayerController
 
 }
 
-
-/*
- //¼­¹ö°¡ ÁÂÇ¥¸¦ º¸³»ÁÖ¸é ÀÌµ¿ÇÏ´Â Çü½Ä
-        if (serverCommunication)
-        {
-            PlayerState prevState = State;
-            prevVec = transform.position;
-        
-            //moveVec = transform.position + (moveVec * speed * Time.deltaTime);
-            if (prevState != State || prevVec != moveVec)
-            {
-                Move playerMove = new Move()
-                {
-                    Id = playerId,
-                    Position = new Vector { X = moveVec.x, Y = moveVec.y, Z = moveVec.z },
-                    Rotation = new Vector { X = moveVec.x, Y = moveVec.y, Z = moveVec.z },
-                };
-                Managers.Network.Send(playerMove, INGAME.PlayerMove);
-            }
-            if (playerInfo.Position.X == prevVec.x && playerInfo.Position.Z == prevVec.z)
-            {
-                State = PlayerState.Idle;
-                return;
-            }
-            else
-            {
-                State = PlayerState.Moving;
-                moveVec = new Vector3(playerInfo.Position.X, playerInfo.Position.Y, playerInfo.Position.Z);
-                transform.position = moveVec;
-                Debug.Log("Player:UpdateMoving : moveVec    " + moveVec + "State :" + State);
-            }
-        }
-        */
